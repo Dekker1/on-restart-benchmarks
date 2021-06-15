@@ -1,0 +1,24 @@
+[submodule "software/gecode_on_restart"]
+	path = software/gecode_on_restart
+	url = git@github.com:Dekker1/gecode.git
+	branch = feature/on_restart
+[submodule "software/gecode_on_record"]
+	path = software/gecode_on_record
+	url = git@github.com:Dekker1/gecode.git
+	branch = test/on_restart_record
+[submodule "software/gecode_on_replay"]
+	path = software/gecode_on_replay
+	url = git@github.com:Dekker1/gecode.git
+	branch = test/on_restart_replay
+[submodule "software/gecode"]
+	path = software/gecode
+	url = git@github.com:Dekker1/gecode.git
+	branch = develop
+[submodule "software/chuffed"]
+	path = software/chuffed
+	url = git@github.com:Dekker1/chuffed.git
+	branch = develop
+[submodule "software/chuffed_on_restart"]
+	path = software/chuffed_on_restart
+	url = git@github.com:Dekker1/chuffed.git
+	branch = feature/on_restart
