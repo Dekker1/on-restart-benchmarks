@@ -13,7 +13,7 @@ mkdir -p ${output_folder}
 
 for data in ./${folder}/*.dzn; do
 	echo -n "Recording ${model} with ${data}: "
-	for i in {1..${runs}}; do
+	for i in $( seq 1 $runs ); do
 		echo -n "${i} "
 		filename=$(basename -- "$data")
 		filename="${filename%.*}"
