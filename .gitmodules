@@ -14,3 +14,7 @@
 	path = software/chuffed
 	url = git@github.com:Dekker1/chuffed.git
 	branch = feature/on_restart
+[submodule "software/minizinc"]
+	path = software/minizinc
+	url = git@github.com:Dekker1/libminizinc.git
+	branch = feature/on_restart
