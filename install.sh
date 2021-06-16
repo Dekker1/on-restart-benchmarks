@@ -14,3 +14,5 @@ do
 	cmake --build software/build/${dir} --config Release --target install -- -j4
 done
 
+ln -s `pwd`/software/install/gecode/share/minizinc/gecode/mznlib `pwd`/software/install/minizinc/share/minizinc/gecode
+ln -s `pwd`/software/install/chuffed/share/minizinc/chuffed `pwd`/software/install/minizinc/share/minizinc/chuffed
