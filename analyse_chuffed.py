@@ -13,6 +13,7 @@ import os
 import re
 import sys
 
+
 def compute_area(file, time):
     area = -1
 
@@ -25,28 +26,29 @@ def compute_area(file, time):
         # if match:
         #     objectives.append(int(match[1]))
         #     continue
-        match = re.match(r'objective\s=\s(\d+)', line)
+        match = re.match(r"objective\s=\s(\d+)", line)
         if match:
             objectives.append(int(match[1]))
             continue
-        match = re.match(r'%\stime elapsed:\s(\d+)\sms', line)
+        match = re.match(r"%\stime elapsed:\s(\d+)\sms", line)
         if match:
             times.append(int(match[1]))
             continue
     times.append(time)
 
-    assert(len(objectives) > 0)
-    assert(len(objectives)+1 == len(times))
+    assert len(objectives) > 0
+    assert len(objectives) + 1 == len(times)
     area = 0
     for i in range(len(objectives)):
-        area += ((times[i+1] - times[i])/1000)*objectives[i]
+        area += ((times[i + 1] - times[i]) / 1000) * objectives[i]
     return int(area)
+
 
 folder = sys.argv[1]
 stats = {}
 for root, dirs, files in os.walk(folder):
     for name in files:
-        if name.endswith('.sol'):
+        if name.endswith(".sol"):
             seed = 1
             match = re.search(r"\.(\d+)\.sol", name)
             if match:
@@ -59,36 +61,42 @@ for root, dirs, files in os.walk(folder):
                 # Nodes
                 match = re.search(r"nodes:\s+(\d+)", line)
                 if match:
-                    statistics['nodes'] = int(match.group(1))
+                    statistics["nodes"] = int(match.group(1))
                     continue
                 # Solve time
                 match = re.search(r"search time:\s+(\d+\.\d+)\s*seconds", line)
                 if match:
-                    statistics['search_time'] = int(float(match.group(1))*1000)
+                    statistics["search_time"] = int(float(match.group(1)) * 1000)
                     continue
                 # Restarts
                 match = re.search(r"restart count:\s+(\d+)", line)
                 if match:
-                    statistics['restarts'] = int(match.group(1))
+                    statistics["restarts"] = int(match.group(1))
                     continue
 
             for line in contents[::-1]:
                 # Best objective
-                match = re.match(r'objective\s=\s(\d+)', line)
+                match = re.match(r"objective\s=\s(\d+)", line)
                 if match:
-                    statistics['objective'] = int(match[1])
+                    statistics["objective"] = int(match[1])
                     break
             # Area
-            area = compute_area(contents, statistics['search_time'])
+            area = compute_area(contents, statistics["search_time"])
 
-            stats[name[:-(4)].replace(".", ",")] = (area, statistics['objective'], statistics['search_time'], statistics['restarts'], statistics['nodes'])
+            stats[name[:-(4)].replace(".", ",")] = (
+                area,
+                statistics["objective"],
+                statistics["search_time"],
+                statistics["restarts"],
+                statistics["nodes"],
+            )
 
 sorted_stats = sorted(stats.items())
-a = sorted_stats[0][0][:sorted_stats[0][0].find(",")]
+a = sorted_stats[0][0][: sorted_stats[0][0].find(",")]
 for key, val in sorted_stats:
-    if key[:key.find(",")] != a:
+    if key[: key.find(",")] != a:
         print("\n\n")
-        a = key[:key.find(",")]
+        a = key[: key.find(",")]
     print("%s,%s" % (key, ",".join([v.__str__() for v in val])))
 
 exit(1)

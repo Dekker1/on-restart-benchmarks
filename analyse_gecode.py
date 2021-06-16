@@ -13,6 +13,7 @@ import os
 import re
 import sys
 
+
 def compute_area(file):
     area = -1
 
@@ -25,11 +26,11 @@ def compute_area(file):
         # if match:
         #     objectives.append(int(match[1]))
         #     continue
-        match = re.match(r'objective\s=\s(\d+)', line)
+        match = re.match(r"objective\s=\s(\d+)", line)
         if match:
             objectives.append(int(match[1]))
             continue
-        match = re.match(r'%\stime elapsed:\s(\d+)\sms', line)
+        match = re.match(r"%\stime elapsed:\s(\d+)\sms", line)
         if match:
             times.append(int(match[1]))
             continue
@@ -38,18 +39,19 @@ def compute_area(file):
             times.append(int(match.group(1)))
             continue
 
-    assert(len(objectives) > 0)
-    assert(len(objectives)+1 == len(times))
+    assert len(objectives) > 0
+    assert len(objectives) + 1 == len(times)
     area = 0
     for i in range(len(objectives)):
-        area += ((times[i+1] - times[i])/1000)*objectives[i]
+        area += ((times[i + 1] - times[i]) / 1000) * objectives[i]
     return int(area)
 
-folder = sys.argv[1]
+
+foler = sys.argv[1]
 statistics = {}
 for root, dirs, files in os.walk(folder):
     for name in files:
-        if name.endswith('.sol'):
+        if name.endswith(".sol"):
             seed = 1
             match = re.search(r"\.(\d+)\.sol", name)
             if match:
@@ -59,10 +61,10 @@ for root, dirs, files in os.walk(folder):
             # Area
             area = compute_area(contents)
 
-            objective = 'UNSAT'
+            objective = "UNSAT"
             for line in contents[::-1]:
                 # Best objective
-                match = re.match(r'objective\s=\s(\d+)', line)
+                match = re.match(r"objective\s=\s(\d+)", line)
                 if match:
                     objective = int(match[1])
                     break
@@ -86,14 +88,20 @@ for root, dirs, files in os.walk(folder):
                 if match:
                     restarts = int(match.group(1))
                     continue
-            statistics[name[:-(4)].replace(".", ",")] = (area, objective, solvetime, restarts, nodes)
+            statistics[name[:-(4)].replace(".", ",")] = (
+                area,
+                objective,
+                solvetime,
+                restarts,
+                nodes,
+            )
 
 sorted_stats = sorted(statistics.items())
-a = sorted_stats[0][0][:sorted_stats[0][0].find(",")]
+a = sorted_stats[0][0][: sorted_stats[0][0].find(",")]
 for key, val in sorted_stats:
-    if key[:key.find(",")] != a:
+    if key[: key.find(",")] != a:
         print("\n\n")
-        a = key[:key.find(",")]
+        a = key[: key.find(",")]
     print("%s,%s" % (key, ",".join([v.__str__() for v in val])))
 
 exit(1)
