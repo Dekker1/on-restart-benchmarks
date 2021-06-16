@@ -1,5 +1,5 @@
 include "rcpsp-wet.mzn";
-include "../lib.mzn";
+include "restart.mzn";
 
 predicate int_eq_imp(var int: x, var int: y, var bool: b);
 predicate bool_eq_imp(var bool: x, var bool: y, var bool: b);
@@ -21,12 +21,12 @@ predicate free_timeslot(var bool: b) =
 array[1..2] of var bool: nbh;
 constraint randomize(nbh[1]);
 constraint free_timeslot(nbh[2]);
-var 0..10000000: restart = restart_number();
-var 1..2: select = (restart mod 2) + 1;
-constraint bool_eq_imp(nbh[1], false, status() == UNKNOWN);
-constraint bool_eq_imp(nbh[2], false, status() == UNKNOWN);
-constraint bool_eq_imp(nbh[1], select == 1, status() != UNKNOWN);
-constraint bool_eq_imp(nbh[2], select == 2, status() != UNKNOWN);
+var 1..2: select;
+constraint lastval(select) mod 2 + 1 = select; 
+constraint bool_eq_imp(nbh[1], false, status() == START);
+constraint bool_eq_imp(nbh[2], false, status() == START);
+constraint bool_eq_imp(nbh[1], select == 1, status() != START);
+constraint bool_eq_imp(nbh[2], select == 2, status() != START);
 
 annotation main_vars(array[int] of var int: vars);
 
