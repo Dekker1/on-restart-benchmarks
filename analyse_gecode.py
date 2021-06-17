@@ -28,15 +28,15 @@ def compute_area(file):
         #     continue
         match = re.match(r"objective\s=\s(\d+)", line)
         if match:
-            objectives.append(int(match[1]))
+            objectives.append(int(match.group(1)))
             continue
-        match = re.match(r"%\stime elapsed:\s(\d+)\sms", line)
+        match = re.match(r"%\stime elapsed:\s(\d\.\d+)\ss", line)
         if match:
-            times.append(int(match[1]))
+            times.append(float(match.group(1)))
             continue
-        match = re.search(r"solvetime:.*\((\d+).(\d+)\s+ms\)", line)
+        match = re.search(r"solveTime=(\d+(.\d+)?)", line)
         if match:
-            times.append(int(match.group(1)))
+            times.append(float(match.group(1)))
             continue
 
     assert len(objectives) > 0
@@ -47,7 +47,7 @@ def compute_area(file):
     return int(area)
 
 
-foler = sys.argv[1]
+folder = sys.argv[1]
 statistics = {}
 for root, dirs, files in os.walk(folder):
     for name in files:
@@ -66,7 +66,7 @@ for root, dirs, files in os.walk(folder):
                 # Best objective
                 match = re.match(r"objective\s=\s(\d+)", line)
                 if match:
-                    objective = int(match[1])
+                    objective = int(match.group(1))
                     break
 
             nodes = -1
@@ -79,12 +79,12 @@ for root, dirs, files in os.walk(folder):
                     nodes = int(match.group(1))
                     continue
                 # Solve time
-                match = re.search(r"solvetime:.*\((\d+).(\d+)\s+ms\)", line)
+                match = re.search(r"solveTime=(\d+(.\d+)?)", line)
                 if match:
-                    solvetime = int(match.group(1))
+                    solvetime = float(match.group(1))
                     continue
                 # Restarts
-                match = re.search(r"restarts:\s+(\d+)", line)
+                match = re.search(r"restarts=(\d+)", line)
                 if match:
                     restarts = int(match.group(1))
                     continue

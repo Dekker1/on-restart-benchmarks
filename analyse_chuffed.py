@@ -24,15 +24,15 @@ def compute_area(file, time):
     for line in contents:
         # match = re.match(r'%\sinit_area\s=\s(\d+)', line)
         # if match:
-        #     objectives.append(int(match[1]))
+        #     objectives.append(int(match.group(1)))
         #     continue
         match = re.match(r"objective\s=\s(\d+)", line)
         if match:
-            objectives.append(int(match[1]))
+            objectives.append(int(match.group(1)))
             continue
         match = re.match(r"%\stime elapsed:\s(\d+)\sms", line)
         if match:
-            times.append(int(match[1]))
+            times.append(int(match.group(1)))
             continue
     times.append(time)
 
@@ -57,14 +57,15 @@ for root, dirs, files in os.walk(folder):
                 contents = f.readlines()
 
             statistics = {}
+            print(contents)
             for line in contents:
                 # Nodes
-                match = re.search(r"nodes:\s+(\d+)", line)
+                match = re.search(r"nodes=(\d+)", line)
                 if match:
                     statistics["nodes"] = int(match.group(1))
                     continue
                 # Solve time
-                match = re.search(r"search time:\s+(\d+\.\d+)\s*seconds", line)
+                match = re.search(r"solveTime=(\d+\.\d+)", line)
                 if match:
                     statistics["search_time"] = int(float(match.group(1)) * 1000)
                     continue
@@ -78,7 +79,7 @@ for root, dirs, files in os.walk(folder):
                 # Best objective
                 match = re.match(r"objective\s=\s(\d+)", line)
                 if match:
-                    statistics["objective"] = int(match[1])
+                    statistics["objective"] = int(match.group(1))
                     break
             # Area
             area = compute_area(contents, statistics["search_time"])
