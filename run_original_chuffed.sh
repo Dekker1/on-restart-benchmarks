@@ -16,6 +16,6 @@ for data in ./${folder}/*.dzn; do
 	filename=$(basename -- "$data")
 	filename="${filename%.*}"
 	minizinc --solver mzn-fzn -c -Gchuffed ${model}.mzn ${data} &> ${output_folder}/${filename}.sol
-	${solver} -a --time-out ${timeout_sec} -s --verbosity 2 ${model}.fzn &>/dev/null | minizinc --output-time --ozn-file ${model}.ozn >> ${output_folder}/${filename}.sol
+	${solver} -a --time-out ${timeout_sec}000 -s ${model}.fzn | minizinc --output-time --ozn-file ${model}.ozn >> ${output_folder}/${filename}.sol
 	rm -f ${model}.fzn ${model}.ozn
 done
