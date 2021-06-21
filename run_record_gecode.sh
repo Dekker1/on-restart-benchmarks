@@ -7,7 +7,7 @@ folder=$1
 source setup.sh
 
 solver="./software/install/gecode_on_record/bin/fzn-gecode"
-model="./${folder}/on_restart"
+model="./${folder}/on_record"
 output_folder="./output/gecode/${folder}/record"
 mkdir -p ${output_folder}
 

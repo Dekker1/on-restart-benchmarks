@@ -1,23 +1,26 @@
-include "steelmillslab.mzn";
+include "rcpsp-wet.mzn";
 include "restart.mzn";
 
 predicate int_eq_imp(var int: x, var int: y, var bool: b);
 predicate bool_eq_imp(var bool: x, var bool: y, var bool: b);
 
-predicate random_assignment(var bool: b) = forall(i in 1..nbSlabs) (
-    int_eq_imp(assign[i], sol(assign[i]), b /\ (uniform_internal(1,100) < 80))
-);
+predicate randomize(var bool: b) =
+    forall(t in Tasks) (
+        int_eq_imp(s[t], sol(s[t]), b /\ uniform_internal(1,100) < 80)
+    );
 
-predicate random_bin(var bool: b) = let {
-        var int: bin = uniform_internal(1, nbSlabs);
-    } in forall(i in 1..nbSlabs) (
-        int_eq_imp(assign[i], sol(assign[i]), b /\ (bin != sol(assign[i])))
+predicate free_timeslot(var bool: b) =
+    let {
+        int: slot = max(Times) div 10;
+        var int: time = uniform_internal(min(Times), max(Times) - slot);
+    } in forall(t in Tasks) (
+        int_eq_imp(s[t], sol(s[t]), b /\ (sol(s[t]) < time \/ time+slot > sol(s[t])))
     );
 
 % Round Robin
 array[1..2] of var bool: nbh;
-constraint random_assignment(nbh[1]);
-constraint random_bin(nbh[2]);
+constraint randomize(nbh[1]);
+constraint free_timeslot(nbh[2]);
 var 1..2: select;
 constraint lastval(select) mod 2 + 1 = select; 
 constraint bool_eq_imp(nbh[1], false, status() == START);
@@ -28,5 +31,6 @@ constraint bool_eq_imp(nbh[2], select == 2, status() != START);
 annotation main_vars(array[int] of var int: vars);
 
 solve
-    :: int_search(ordered, first_fail, indomain_min, complete)
+    ::main_vars(s)
+    ::int_search(s, first_fail, indomain_min, complete)
     minimize objective;

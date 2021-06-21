@@ -28,5 +28,4 @@ constraint bool_eq_imp(nbh[2], select == 2, status() != START);
 annotation main_vars(array[int] of var int: vars);
 
 solve
-    :: main_vars(period_of)
     :: int_search(period_of,first_fail,indomain_min,complete) minimize objective;
