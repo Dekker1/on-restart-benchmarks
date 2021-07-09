@@ -8,7 +8,6 @@ area which can be found by adding
 'constraint trace("% init_area = \(ub(objective));\n", true);'
 to the model in question.
 """
-import csv
 import os
 import re
 import sys
