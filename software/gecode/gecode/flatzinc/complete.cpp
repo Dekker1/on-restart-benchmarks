@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Jip J. Dekker <jip.dekker@monash.edu>
  *
  *  Copyright:
- *     Christian Schulte, 2006
+ *     Jip J. Dekker, 2018
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,70 +31,40 @@
  *
  */
 
-#include <gecode/search.hh>
+#include "complete.hh"
 
-namespace Gecode { namespace Search {
+namespace Gecode { namespace FlatZinc {
 
-   /*
-    * Creation functions for stop objects
-    *
-    */
-  Stop*
-  Stop::node(unsigned long long int l) {
-    return new NodeStop(l);
-  }
-  Stop*
-  Stop::fail(unsigned long long int l) {
-    return new FailStop(l);
-  }
-  Stop*
-  Stop::time(double l) {
-    return new TimeStop(l);
-  }
-  Stop*
-  Stop::restart(unsigned long long int  l) {
-    return new RestartStop(l);
+
+  Complete::Complete(Space &home, Complete &p)
+  : UnaryPropagator<BoolView, PC_BOOL_VAL>(home,p), c(p.c) {}
+
+  Complete::Complete(Home home, BoolView x0, std::shared_ptr<bool> c)
+      : c(c), UnaryPropagator<BoolView, PC_BOOL_VAL>(home, x0) {}
+
+  Actor* Complete::copy(Space &home) {
+    return new (home) Complete(home,*this);
   }
 
-
-  /*
-   * Stopping for node limit
-   *
-   */
-  bool
-  NodeStop::stop(const Statistics& s, const Options&) {
-    return s.node > l;
+  PropCost Complete::cost(const Space &home, const ModEventDelta &med) const {
+    return PropCost::record();
   }
 
-
-  /*
-   * Stopping for failure limit
-   *
-   */
-  bool
-  FailStop::stop(const Statistics& s, const Options&) {
-    return s.fail > l;
+  ExecStatus Complete::propagate(Space &home, const ModEventDelta &med) {
+    assert(x0.assigned());
+    (*c) = x0.val();
+		return ES_FAILED;
   }
 
-
-  /*
-   * Stopping for time limit
-   *
-   */
-  bool
-  TimeStop::stop(const Statistics&, const Options&) {
-    return t.stop() > l;
+  ExecStatus Complete::post(Home home, BoolView x0, std::shared_ptr<bool> c) {
+		assert(c != nullptr);
+    if (x0.assigned()) {
+      (*c) = x0.val();
+    } else {
+      (void) new (home) Complete(home, x0, c);
+    }
+    return ES_OK;
   }
 
-  /*
-   * Stopping for restart limit
-   *
-   */
-  bool
-  RestartStop::stop(const Statistics& s, const Options&) {
-    return s.restart > l;
-  }
 
 }}
-
-// STATISTICS: search-other
