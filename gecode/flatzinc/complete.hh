@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Jip J. Dekker <jip.dekker@monash.edu>
  *
  *  Copyright:
- *     Christian Schulte, 2006
+ *     Jip J. Dekker, 2018
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,70 +31,35 @@
  *
  */
 
-#include <gecode/search.hh>
+#ifndef __FLATZINC_COMPLETE_HH__
+#define __FLATZINC_COMPLETE_HH__
 
-namespace Gecode { namespace Search {
+#include <gecode/int.hh>
+#include <memory>
+using namespace Gecode::Int;
 
-   /*
-    * Creation functions for stop objects
-    *
-    */
-  Stop*
-  Stop::node(unsigned long long int l) {
-    return new NodeStop(l);
-  }
-  Stop*
-  Stop::fail(unsigned long long int l) {
-    return new FailStop(l);
-  }
-  Stop*
-  Stop::time(double l) {
-    return new TimeStop(l);
-  }
-  Stop*
-  Stop::restart(unsigned long long int  l) {
-    return new RestartStop(l);
-  }
+namespace Gecode { namespace FlatZinc {
 
+  class Complete : public UnaryPropagator<BoolView, PC_BOOL_VAL> {
+  protected:
+    using UnaryPropagator<BoolView,PC_BOOL_VAL>::x0;
+    std::shared_ptr<bool> c;
 
-  /*
-   * Stopping for node limit
-   *
-   */
-  bool
-  NodeStop::stop(const Statistics& s, const Options&) {
-    return s.node > l;
-  }
+    /// Constructor for cloning \a p
+    Complete(Space& home, Complete& p);
+    /// Constructor for posting
+    Complete(Home home, BoolView x0, std::shared_ptr<bool> c);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Cost function (defined as TODO)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
 
-
-  /*
-   * Stopping for failure limit
-   *
-   */
-  bool
-  FailStop::stop(const Statistics& s, const Options&) {
-    return s.fail > l;
-  }
-
-
-  /*
-   * Stopping for time limit
-   *
-   */
-  bool
-  TimeStop::stop(const Statistics&, const Options&) {
-    return t.stop() > l;
-  }
-
-  /*
-   * Stopping for restart limit
-   *
-   */
-  bool
-  RestartStop::stop(const Statistics& s, const Options&) {
-    return s.restart > l;
-  }
+    static ExecStatus post(Home home, BoolView x0, std::shared_ptr<bool> c);
+  };
 
 }}
 
-// STATISTICS: search-other
+#endif //__FLATZINC_COMPLETE_HH__

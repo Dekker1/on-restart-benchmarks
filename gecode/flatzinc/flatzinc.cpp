@@ -790,6 +790,7 @@ namespace Gecode { namespace FlatZinc {
       iv_lns.update(*this, f.iv_lns);
       intVarCount = f.intVarCount;
 
+      restart_complete.update(*this, f.restart_complete);
       restart_status.update(*this, f.restart_status);
       int_uniform_var.update(*this, f.int_uniform_var);
       int_uniform_lb = f.int_uniform_lb;
@@ -1847,7 +1848,7 @@ namespace Gecode { namespace FlatZinc {
       n_p = PropagatorGroup::all.size(*this);
     }
     Search::Options o;
-    o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(),
+    o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(), opt.restart_limit(),
                                           true);
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
@@ -2012,16 +2013,37 @@ namespace Gecode { namespace FlatZinc {
   bool
   FlatZincSpace::slave(const MetaInfo& mi) {
     if (mi.type() == MetaInfo::RESTART) {
+			if (restart_complete.size() > 0) {
+				assert(restart_complete.size() == 1);
+				assert(complete_marker != nullptr);
+				if (*complete_marker) {
+					// Fail the space
+					this->fail();
+					// Return true to signal we are in the global search space
+					return true;
+				}
+			}
+
       bool ret = false;
       if (restart_status.size() > 0) {
         assert(restart_status.size() == 1);
-        if (!mi.last()) {
-          rel(*this, restart_status[0], IRT_EQ, 1); // 1: START
-        } else if (mi.solution() > 0) {
-          rel(*this, restart_status[0], IRT_EQ, 4); // 4: SAT
-        } else {
-          rel(*this, restart_status[0], IRT_EQ, 2); // 2: UNKNOWN
-        }
+				switch(mi.reason()) {
+					case MetaInfo::RR_INIT:
+						assert(!mi.last());
+						rel(*this, restart_status[0], IRT_EQ, 1); // 1: START
+						break;
+					case MetaInfo::RR_SOL:
+						assert(mi.solution() > 0);
+						rel(*this, restart_status[0], IRT_EQ, 4); // 4: SAT
+						break;
+					case MetaInfo::RR_CMPL:
+						rel(*this, restart_status[0], IRT_EQ, 3); // 3: UNSAT
+						break;
+					default:
+						assert(mi.reason() == MetaInfo::RR_LIM);
+						rel(*this, restart_status[0], IRT_EQ, 2); // 2: UNKNOWN
+						break;
+				}
         restart_status = IntVarArray(*this, 0);
         ret = true;
       }
