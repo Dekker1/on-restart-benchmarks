@@ -656,7 +656,7 @@ MIPosicbcWrapper::Status MIPosicbcWrapper::convertStatus(CbcModel* pModel) {
     s = Status::SAT;
     output.statusName = "Feasible";
   } else if (pModel->isAbandoned()) {  // AFTER feas-ty
-    s = Status::ERROR_STATUS;
+    s = Status::__ERROR;
     output.statusName = "Abandoned";
   } else {
     s = Status::UNKNOWN;
@@ -680,7 +680,7 @@ MIPosicbcWrapper::Status MIPosicbcWrapper::convertStatus() {
     output.statusName = "Dual infeasible";
     //        s = Status::UNSATorUNBND;
   } else if (_osi.isAbandoned()) {
-    s = Status::ERROR_STATUS;
+    s = Status::__ERROR;
     output.statusName = "Abandoned";
   } else if  // wrong: (pModel->getColSolution())
       (fabs(_osi.getObjValue()) < _osi.getInfinity()) {
@@ -763,12 +763,12 @@ void MIPosicbcWrapper::solve() {  // Move into ancestor?
       cerr << " Model creation..." << endl;
     }
 
-    // #define MZN_USE_CbcSolver  -- not linked rev2274
+    // #define __USE_CbcSolver__  -- not linked rev2274
     /// FOR WARMSTART
     for (const auto& vv : _warmstart) {
       _osi.setColName(vv.first, colNames[vv.first]);
     }
-#ifdef MZN_USE_CbcSolver
+#ifdef __USE_CbcSolver__
     CbcSolver control(osi);
     // initialize
     control.fillValuesInSolver();
@@ -938,14 +938,14 @@ void MIPosicbcWrapper::solve() {  // Move into ancestor?
 //      CbcCbcParamUtils::setCbcModelDefaults(model) ;
 //       const char * argv2[]={"mzn-cbc","-solve","-quit"};
 //        CbcMain1(3,argv2,model);
-#ifdef MZN_USE_CbcSolver
+#ifdef __USE_CbcSolver__
     if (fVerbose)
       cerr << "  Calling control.solve() with options '" << options->cbcCmdOptions << "'..."
            << endl;
     control.solve(options->cbcCmdOptions.c_str(), 1);
 #else
-#define MZN_USE_callCbc1
-#ifdef MZN_USE_callCbc1
+#define __USE_callCbc1__
+#ifdef __USE_callCbc1__
     if (fVerbose) {
       cerr << "  Calling CbcMain with command 'cbc";
       for (const auto& arg : _options->cbcCmdOptions) {

@@ -1592,7 +1592,6 @@ Constants::Constants() {
   ids.set_subset = ASTString("set_subset");
   ids.set_card = ASTString("set_card");
   ids.pow = ASTString("pow");
-  ids.mzn_set_in_internal = ASTString("mzn_set_in_internal");
 
   ids.introduced_var = ASTString("__INTRODUCED");
   ids.anonEnumFromStrings = ASTString("anon_enum");
@@ -1832,7 +1831,6 @@ void Constants::mark(MINIZINC_GC_STAT_ARGS) {
   ids.set_subset.mark();
   ids.set_card.mark();
   ids.pow.mark();
-  ids.mzn_set_in_internal.mark();
 
   ids.assert.mark();
   ids.mzn_deprecate.mark();

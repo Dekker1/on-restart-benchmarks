@@ -13,6 +13,7 @@
 
 #include <minizinc/solver.hh>
 
+const auto SolverInstance__ERROR = MiniZinc::SolverInstance::ERROR;  // before windows.h
 #ifdef _WIN32
 #define NOMINMAX
 #include <Windows.h>

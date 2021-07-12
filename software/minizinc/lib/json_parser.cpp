@@ -629,8 +629,7 @@ void JSONParser::parseModel(Model* m, std::istream& is, bool isData) {
     string ident = expectString(is);
     expectToken(is, T_COLON);
     auto it = knownIds.find(ident);
-    bool possibleString = it == knownIds.end() ||
-                          (!it->second->isEnum() && it->second->type().bt() != Type::BT_UNKNOWN);
+    bool possibleString = it == knownIds.end() || it->second->type().bt() != Type::BT_UNKNOWN;
     Expression* e = parseExp(is, isData, possibleString);
     if (ident[0] != '_' && (!isData || it != knownIds.end())) {
       if (e == nullptr) {
@@ -648,7 +647,7 @@ void JSONParser::parseModel(Model* m, std::istream& is, bool isData) {
             e = coerceArray(it->second, al);
           } else if (it->second->type().isSet()) {
             // Convert array to a set
-            e = new SetLit(Location().introduce(), al->getVec());
+            e = new Call(Location().introduce(), "array2set", {al});
           }
         }
         auto* ai = new AssignI(e->loc().introduce(), ident, e);

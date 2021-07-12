@@ -103,21 +103,15 @@ bool EvalBase::evalBoolCV(EnvI& env, Expression* e) {
   return eval_bool(env, e);
 };
 
-KeepAlive EvalBase::flattenCV(EnvI& env, Expression* e) {
-  GCLock lock;
-  Ctx ctx;
-  ctx.i = C_MIX;
-  ctx.b = (e->type().bt() == Type::BT_BOOL) ? C_MIX : C_ROOT;
-  EE ee = flat_exp(env, ctx, e, nullptr, constants().varTrue);
-  return ee.r;
-}
-
 class EvalIntLit : public EvalBase {
 public:
   typedef IntLit* Val;
   typedef Expression* ArrayVal;
   static IntLit* e(EnvI& env, Expression* e) { return IntLit::a(eval_int(env, e)); }
   static Expression* exp(IntLit* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalIntVal : public EvalBase {
 public:
@@ -133,6 +127,9 @@ public:
                                    "function result violates function type-inst");
       }
     }
+  }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
   }
 };
 class EvalFloatVal : public EvalBase {
@@ -150,6 +147,9 @@ public:
       }
     }
   }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalFloatLit : public EvalBase {
 public:
@@ -157,6 +157,9 @@ public:
   typedef Expression* ArrayVal;
   static FloatLit* e(EnvI& env, Expression* e) { return FloatLit::a(eval_float(env, e)); }
   static Expression* exp(Expression* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalString : public EvalBase {
 public:
@@ -165,6 +168,9 @@ public:
   static std::string e(EnvI& env, Expression* e) { return eval_string(env, e); }
   static Expression* exp(const std::string& e) { return new StringLit(Location(), e); }
   static void checkRetVal(EnvI& env, const Val& v, FunctionI* fi) {}
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalStringLit : public EvalBase {
 public:
@@ -174,6 +180,9 @@ public:
     return new StringLit(Location(), eval_string(env, e));
   }
   static Expression* exp(Expression* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalBoolLit : public EvalBase {
 public:
@@ -181,6 +190,9 @@ public:
   typedef Expression* ArrayVal;
   static BoolLit* e(EnvI& env, Expression* e) { return constants().boollit(eval_bool(env, e)); }
   static Expression* exp(Expression* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalBoolVal : public EvalBase {
 public:
@@ -188,6 +200,9 @@ public:
   static bool e(EnvI& env, Expression* e) { return eval_bool(env, e); }
   static Expression* exp(bool e) { return constants().boollit(e); }
   static void checkRetVal(EnvI& env, Val v, FunctionI* fi) {}
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalArrayLit : public EvalBase {
 public:
@@ -195,6 +210,9 @@ public:
   typedef Expression* ArrayVal;
   static ArrayLit* e(EnvI& env, Expression* e) { return eval_array_lit(env, e); }
   static Expression* exp(Expression* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalArrayLitCopy : public EvalBase {
 public:
@@ -273,6 +291,9 @@ public:
       }
     }
   }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalIntSet : public EvalBase {
 public:
@@ -289,6 +310,9 @@ public:
                                    "function result violates function type-inst");
       }
     }
+  }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
   }
 };
 class EvalFloatSet : public EvalBase {
@@ -307,6 +331,9 @@ public:
       }
     }
   }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalBoolSet : public EvalBase {
 public:
@@ -318,6 +345,9 @@ public:
     return sl;
   }
   static void checkRetVal(EnvI& env, Val v, FunctionI* fi) {}
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalSetLit : public EvalBase {
 public:
@@ -325,6 +355,9 @@ public:
   typedef Expression* ArrayVal;
   static SetLit* e(EnvI& env, Expression* e) { return eval_set_lit(env, e); }
   static Expression* exp(Expression* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalFloatSetLit : public EvalBase {
 public:
@@ -332,6 +365,9 @@ public:
   typedef Expression* ArrayVal;
   static SetLit* e(EnvI& env, Expression* e) { return new SetLit(e->loc(), eval_floatset(env, e)); }
   static Expression* exp(Expression* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalBoolSetLit : public EvalBase {
 public:
@@ -343,6 +379,9 @@ public:
     return sl;
   }
   static Expression* exp(Expression* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalCopy : public EvalBase {
 public:
@@ -350,6 +389,9 @@ public:
   typedef Expression* ArrayVal;
   static Expression* e(EnvI& env, Expression* e) { return copy(env, e, true); }
   static Expression* exp(Expression* e) { return e; }
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 class EvalPar : public EvalBase {
 public:
@@ -358,6 +400,9 @@ public:
   static Expression* e(EnvI& env, Expression* e) { return eval_par(env, e); }
   static Expression* exp(Expression* e) { return e; }
   static void checkRetVal(EnvI& env, Val v, FunctionI* fi) {}
+  static Expression* flatten(EnvI& /*env*/, Expression* /*e*/) {
+    throw InternalError("evaluating var assignment generator inside par expression not supported");
+  }
 };
 
 void check_dom(EnvI& env, Id* arg, IntSetVal* dom, Expression* e) {
@@ -1199,9 +1244,7 @@ bool eval_bool(EnvI& env, Expression* e) {
             return false;
           }
         } else if (bo->op() == BOT_EQ && lhs->type().isAnn()) {
-          // follow ann id to value, since there might be indirection (e.g. func argument, see
-          // test_equality_of_indirect_annotations.mzn)
-          return Expression::equal(follow_id_to_value(lhs), follow_id_to_value(rhs));
+          return Expression::equal(lhs, rhs);
         } else if (bo->op() == BOT_EQ && lhs->type().dim() > 0 && rhs->type().dim() > 0) {
           try {
             ArrayLit* al0 = eval_array_lit(env, lhs);
