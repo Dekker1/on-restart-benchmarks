@@ -18,6 +18,12 @@ enum STATUS = {START, UNKNOWN, UNSAT, SAT, OPT};
 function var STATUS: status();
 
 /*
+	When complete is set to 'true', then it marks the search as complete.
+*/
+predicate complete();% = abort("'complete' should be used in reified context");
+predicate complete_reif(var bool: marker);
+
+/*
 	The 'uniform' function provides random values chosen by the solver. The arguments
 	to the function limit the values to a certain domain.
 */

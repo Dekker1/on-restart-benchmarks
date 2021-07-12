@@ -1070,7 +1070,7 @@ MIPCplexWrapper::Status MIPCplexWrapper::convertStatus(int cplexStatus) {
       break;
       //      case CPXMIP_ABORT_INFEAS:
     case CPXMIP_FAIL_INFEAS:
-      s = Status::ERROR_STATUS;
+      s = Status::__ERROR;
       break;
     default:
       //      case CPXMIP_OPTIMAL_TOL:

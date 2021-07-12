@@ -1838,8 +1838,6 @@ public:
     ASTString set_card;          // NOLINT(readability-identifier-naming)
     ASTString pow;
 
-    ASTString mzn_set_in_internal;  // NOLINT(readability-identifier-naming)
-
     ASTString introduced_var;  // NOLINT(readability-identifier-naming)
     ASTString anonEnumFromStrings;
   } ids;
