@@ -1,0 +1,16 @@
+Configuration,Data,Compile Time (s),Solve Time (s)
+Base,gbac/UD2-gbac.dzn,25.458818981423974,17.341287191957235
+Base,gbac/UD4-gbac.dzn,25.138776898384094,14.327164655551314
+Base,gbac/UD5-gbac.dzn,28.67881595157087,19.71248783171177
+Base,gbac/UD8-gbac.dzn,27.21088409423828,25.1462098434567
+Base,gbac/reduced_UD4-gbac.dzn,22.770592607557774,6.444738935679197
+Incremental Rewriting,gbac/UD2-gbac.dzn,0.44289878150448203,16.619278862606734
+Incremental Rewriting,gbac/UD4-gbac.dzn,0.2829281724989414,14.927907383069396
+Incremental Rewriting,gbac/UD5-gbac.dzn,0.5103892032057047,18.957355537917465
+Incremental Rewriting,gbac/UD8-gbac.dzn,0.39341115299612284,24.45117470016703
+Incremental Rewriting,gbac/reduced_UD4-gbac.dzn,0.13793163280934095,7.798715312965214
+Restart Based Search,gbac/UD2-gbac.dzn,0.24477300000000002,10.421576
+Restart Based Search,gbac/UD4-gbac.dzn,0.1655035,5.5756935
+Restart Based Search,gbac/UD5-gbac.dzn,0.35128000000000004,19.6692045
+Restart Based Search,gbac/UD8-gbac.dzn,0.18578899999999998,22.257126
+Restart Based Search,gbac/reduced_UD4-gbac.dzn,0.076363,5.0173045

@@ -22,7 +22,8 @@
 %
 %------------------------------------------------------------------------------%
 % Includes
-include "globals.mzn";
+include "global_cardinality_low_up_closed.mzn";
+include "bin_packing_load.mzn";
 
 %------------------------------------------------------------------------------%
 % Parameters
@@ -119,4 +120,4 @@ constraint objective = w1 * norm + w2 * undesirable_violation;
 constraint trace("% init_area = \(ub(objective));\n", true);
 output
     ["objective = ", show(objective)] ++[";\n"] ++
-["period_of = ", show(period_of)] ++ [";\n"];
+		["period_of = ", show(period_of)] ++ [";\n"];
