@@ -3,11 +3,12 @@ import os
 import re
 import sys
 
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pandas as pd
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 
 def obj_timeline(file_contents: bytes):
@@ -111,7 +112,16 @@ if __name__ == "__main__":
         }
     )
 
+    sns.set(font_scale=1.23, style="whitegrid", font="IBM Plex Sans")
+    fig, ax = plt.subplots()
+    ax.yaxis.set_major_formatter(ticker.EngFormatter())
+
     plot = sns.lineplot(
-        data=df, x="Time (s)", y="Cumulative Objective", hue="Solver Version"
+        data=df,
+        x="Time (s)",
+        y="Cumulative Objective",
+        hue="Solver Version",
+        style="Solver Version",
+        linewidth=4,
     )
     plot.figure.savefig("output.pdf")
